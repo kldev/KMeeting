@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:10.5
+    volumes:
+    - kmeeting-db:/var/lib/postgresql
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: kmeeting
+volumes:
+  kmeeting-db:

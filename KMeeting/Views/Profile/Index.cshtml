@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Profile Page";
+}
+
+@model KMeeting.Models.ProfileModel
+
+<div class="text-center">
+    <h3>Setup your profile</h3>
+</div>
+
+
+<section class="container-fluid">
+
+
+    <div class="alert alert-warning" asp-validation-summary="All">
+
+    </div>
+
+
+
+    <form asp-action="Index" method="post">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+       
+        <div class="form-group">
+            <label asp-for="Fullname">Full name</label>
+            <input type="text" asp-for="Fullname" placeholder="Enter your name" class="form-control" />
+        </div>
+        
+        
+        <div class="form-group">
+            <label asp-for="Mobile">Mobile</label>
+            <input type="text" asp-for="Mobile" placeholder="Enter your mobile" class="form-control" />
+        </div>
+
+        
+        <div class="form-group">
+            <label asp-for="About">About you</label>
+            <textarea class="form-control" rows="10" maxlength="500" asp-for="About"></textarea>
+        </div>
+
+
+        @if (!string.IsNullOrEmpty(Model.Id))
+        {
+            <button type="submit" class="btn btn-primary">Update profile</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-primary">Save profile</button>
+        }
+
+    </form>
+
+</section>
+

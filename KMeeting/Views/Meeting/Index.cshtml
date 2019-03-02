@@ -1,0 +1,95 @@
+﻿@using KMeeting.DAL.Meeting
+@model KMeeting.Models.MeetingEventModel
+@{
+
+}
+
+<div class="text-center">
+    @if (string.IsNullOrEmpty(Model.Id))
+    {
+        <h3>Create meeting event</h3>
+    }
+    else
+    {
+        <h3>Update meeting event</h3>
+    }
+   
+</div>
+
+
+<section class="container-fluid">
+
+
+    <div class="alert alert-warning" asp-validation-summary="All">
+
+    </div>
+
+    <form asp-action="Index" method="post">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="form-group">
+            <label asp-for="Name">Event name</label>
+            <input type="text" asp-for="Name" placeholder="Enter event name" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="City">City</label>
+            <input type="text" asp-for="City" placeholder="Enter city" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Address">Address</label>
+            <input type="text" asp-for="Address" placeholder="Enter the address" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Name">Max attendees</label>
+            <input type="number" asp-for="MaxPeople"  min="0" max="100" step="1" class="form-control" />
+        </div>
+        
+        @if (!string.IsNullOrEmpty(Model.Id))
+        {
+            <div class="form-group">
+                <label asp-for="Name">Status</label>        
+                @Html.DropDownListFor(m => m.Status,  Html.GetEnumSelectList<MeetingEventStatus>(), new { @class = "form-control"})       
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label asp-for="Name">Status</label>        
+                <input type="text" readonly="readonly" value="@Model.Status" class="form-control"/>        
+            </div>
+        }
+       
+        
+        <div class="form-group">
+            <label asp-for="Name">Day start</label>
+            
+            @Html.EditorFor(x=>x.DayStart, new { @class = "form-control"})
+
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Name">Time start</label>
+            
+            @Html.DropDownListFor(m => m.TimeStart,  Model.TimeStartOptionListItems, new { @class = "form-control"})
+
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Id))
+        {
+            <button type="submit" class="btn btn-primary">Update</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-primary">Save</button>
+        }
+
+    </form>
+
+</section>
+
+
+

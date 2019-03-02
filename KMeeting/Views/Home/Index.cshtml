@@ -1,0 +1,170 @@
+﻿@using Microsoft.AspNetCore.Http
+@model List<KMeeting.DAL.Meeting.MeetingEventEntity>
+@{
+    ViewData["Title"] = "Home Page";
+    var message = ViewData["Message"] ?? "";
+}
+
+@if (string.IsNullOrEmpty(ViewBag.message) == false)
+{
+    <div class="container-fluid" id="messageInfo">
+        <div class="alert alert-info">
+            @Html.Raw(message)
+        </div>
+    </div>
+}
+
+<div class="container-fluid" style="margin-bottom: 30px">
+    <a asp-controller="Meeting" asp-action="Index">
+        <span class="btn btn-primary">Create meeting event</span>
+    </a>
+</div>
+
+<div class="container-fluid">
+
+    @if (Model.Count == 0)
+    {
+        <h3>No meeting event created yet</h3>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Start time</th>
+                    <th>Attendees count</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var meeting in Model)
+                {
+                <tr>
+                    <td>@meeting.Name</td>
+                    <td>@meeting.Status.ToString()</td>
+                    <td>@meeting.Date</td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Meeting" asp-route-id="@meeting.Id">
+                            <span class="badge badge-secondary">@meeting.Attendees?.Count</span>
+                        </a>
+                    </td>
+
+                    <td>
+                        <span class="btn-group" role="group">
+                            <a asp-action="Join" asp-route-id="@meeting.Id">
+                                <span class="btn btn-secondary">Join</span>
+                            </a>
+                            
+                            <a asp-action="Leave" asp-route-meetingId="@meeting.Id">
+                                <span class="btn btn-warning">Leave</span>
+                            </a>
+
+                        </span>
+                          
+                    </td>
+                    <td>
+                       
+                    </td>
+                    <td>
+                        <span class="btn btn-danger ajax-delete" data-id="@meeting.Id">
+                            <span class="oi oi-x"></span>
+                        </span>
+
+                        <a asp-action="Index" asp-route-meetingId="@meeting.Id" asp-controller="Meeting">
+                            <span class="btn btn-secondary">
+                                <span class="oi oi-wrench"></span>
+                            </span>
+                        </a>
+                    </td>
+                </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+
+
+
+</div>
+
+<div id="confirmDialog" class="modal" style="display: none" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom-color: transparent">
+                <h5 class="modal-title">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="confirmDialogAlert" style="display: none" class="alert alert-warning">
+
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top-color: transparent">
+                <button type="button" class="btn btn-primary dialog-delete-button">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        setTimeout(function() {
+
+            $('#messageInfo').remove();
+
+        }, 3000);
+
+        $('.ajax-delete', 'table').click(function(event) {
+
+            let targetId = $(this).data('id');
+
+           // alert(`Delete game with id ${targetId}`);
+
+            $('.dialog-delete-button', '#confirmDialog').off('click');
+
+            $('.dialog-delete-button', '#confirmDialog').on('click',
+                function() {
+
+                    $('#confirmDialogAlert').hide();
+                    $('#confirmDialogAlert').html('');
+
+                    $.post('@Url.Action("Remove")',
+                        { id: targetId },
+                        function(data) {
+
+                            if (data.success) {
+                                $('#confirmDialog').modal('hide');
+
+                                window.location.href = '@Url.Action("Index")';
+                            } else {
+
+                                $('#confirmDialogAlert').show();
+                                $('#confirmDialogAlert').html(data.error);
+
+                            }
+                        });
+
+                });
+
+            $('#confirmDialog').modal('show');
+
+
+        });
+
+
+    </script>
+
+}
+
